@@ -1,5 +1,6 @@
 import express from 'express'
 import exphbs from 'express-handlebars'
+import courseRouter from './routes/courseRoutes.js'
 import path from 'path'
 
 
@@ -29,7 +30,8 @@ app.engine('hbs', exphbs.engine({
     extname: '.hbs'
 }))
 
-//rutas
+//Rutas
+app.use('/', courseRouter)
 
 app.listen(PORT, ()=>{
     console.log(`🚀 Servidor corriendo en el puerto http://localhost:${PORT}`)
