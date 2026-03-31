@@ -59,7 +59,7 @@ const createCourse = async (req, res) => {
       price,
       categoryId,
     });
-    console.log(course);
+   
     res.redirect("/");
   } catch (error) {
     console.error("Error al crear categoria:", error);
@@ -67,16 +67,57 @@ const createCourse = async (req, res) => {
   }
 };
 
-//Eliminar los cursos
+//5. Eliminar los cursos
 
 const deleteCourse = async (req, res) => {
   try {
     const { id } = req.params;
     await Course.destroy({ where: { id } });
-    res.redirect('/')
+    res.redirect("/");
   } catch (error) {
     console.error("Error al eliminar", error);
     res.status(500).send("Error al borrar curso");
+  }
+};
+
+//6. Mostrar el formulario de editar el curso
+
+const getEditCourseForm = async (req, res) => {
+  try {
+    const { id } = req.params;
+    //buscar el curso a editar
+    const course = await Course.findByPk(id, { raw: true });
+    if (!course) {
+      res.render("error", {
+        message: "No existe",
+      });
+    }
+    const categories = await Category.findAll({ raw: true });
+
+    res.render("editForm", {
+      categories,
+      course,
+    });
+  } catch (error) {
+    console.error("error al editar el curso", error);
+    res.status(500).send("Error Interno");
+  }
+};
+
+//7. Guardar los datos actualizados en la BBDD
+
+const updateCourse = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { title, description, price, categoryId } = req.body;
+    await Course.update(
+      { title, description, price, categoryId },
+      { where: { id } },
+    );
+    res.redirect("/");
+  } catch (error) {
+    console.error("Error al actualizar: ", error);
+    res.status(500).send("Error al actualizar el curso");
   }
 };
 
@@ -87,4 +128,6 @@ export {
   getCreateCourseForm,
   createCourse,
   deleteCourse,
+  getEditCourseForm,
+  updateCourse
 };
