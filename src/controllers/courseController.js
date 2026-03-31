@@ -3,7 +3,7 @@ import { Course, Category } from "../models/index.js";
 const home = async (req, res) => {
   try {
     const courses = await Course.findAll({ raw: true });
-    
+
     res.render("home", {
       courses,
     });
@@ -67,10 +67,24 @@ const createCourse = async (req, res) => {
   }
 };
 
+//Eliminar los cursos
+
+const deleteCourse = async (req, res) => {
+  try {
+    const { id } = req.params;
+    await Course.destroy({ where: { id } });
+    res.redirect('/')
+  } catch (error) {
+    console.error("Error al eliminar", error);
+    res.status(500).send("Error al borrar curso");
+  }
+};
+
 export {
   home,
   getCreateCategoryForm,
   createCategory,
   getCreateCourseForm,
   createCourse,
+  deleteCourse,
 };
